@@ -1,57 +1,34 @@
-#include <iostream> //подключаем библиотеку iostream
-#include <cmath>    //подключаем библиотеку cmath для нахождения arctg
-#include <clocale>  //подключаем библиотеку clocale
-using namespace std; //используем пространство имён std
-
-int main()//основная функция main
- { 
-    setlocale(LC_ALL, ".UTF-8"); // Для нормального вывода русских букв
-    cout<< "Введите a и b через пробел: ";
-    double a, b;
-    cin >> a >> b; //вводим параметры a и b
-    
-    // Мы объявили cur глобально, как у тебя было задумано.
-    double k = (b-a)/10, se = 0, sn = 0, curr; 
-    int n = 30; // n лучше сделать целым (int), т.к. это количество элементов
-
-    // k - это шаг в цикле
-    // n = количество элементов для суммы 30 элементов
-    // se и sn - суммы для первого и второго условий 
-
-    for (double x = a; x <= b + k/2; x += k)
-    { 
-        cout << "X = " << x << "    "; //вывод текущего x
-        // считаем первую сумму (sn для n=30) 
-        sn = 0; // обнуляем сумму для каждого нового x
-        for (int j = 1; j <= n; j++) 
+#include<iostream>
+#include<cmath>
+#include<clocale>
+using namespace std;
+int main()
+{
+    setlocale(LC_ALL,".UTF-8");
+    double a=1.0,b=2.0,step=0.1;
+    int n=15;
+    double eps=0.0001;
+    cout<<"x|Сумма(n=15)|Сумма(точность)|Точное значение"<<endl;
+    for(int i=0;i<=10;++i)
+    {
+        double x=a+i*step;
+        double sum_a=1.0,k=1.0;
+        for(int j=1;j<=n;++j)
         {
-            // Добавили pow(-1, j+1) для чередования знаков! Иначе ряд неверный.
-            curr = pow(-1, j + 1) * ( pow( x , (2*j + 1) ) ) / (4 * j * j - 1); 
-            sn += curr;
+            k=k*x/j;
+            sum_a=sum_a+k;
         }
-
-        // считаем вторую сумму (se с точностью до eps)
-        se = 0; 
-        int j = 1;
-        double curr_eps;
-        do 
+        double sum_b=1.0;
+        k=1.0;
+        int j=1;
+        while(fabs(k)>=eps)
         {
-            curr_eps = pow(-1, j + 1) * ( pow( x , (2*j + 1) ) ) / (4 * j * j - 1);
-            se += curr_eps;
-            j++;
-        } while (abs(curr_eps) >= 0.0001); // Условие точности (эпсилон)
-
-        //вывод текущих сумм:
-        cout << "Xn = " << sn << "    ";
-        cout << "Xe = " << se << "    ";
-        // Формула точного значения Y: (1+x^2)/2 * arctg(x) - x/2
-        cout << "Y = " << ((1 + x*x)/2.0) * atan(x) - x/2 << endl;
+            k=k*x/j;
+            sum_b=sum_b+k;
+            ++j;
+        }
+        double exact=exp(x);
+        cout<<x<<"|"<<sum_a<<"|"<<sum_b<<"|"<<exact<<endl;
     }
-
-    //вывод результатов (значения для последнего X):
-    cout << endl << "Результаты:" << endl;
-    cout << "Сумма для условия n <= 30 = " << sn << endl;
-    cout << "Сумма для условия точности eps = " << se << endl;
-
-    return 0; // конец программы
+    return 0;
 }
